@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2012 Phenixcoin Developers
+// Copyright (c) 2013 VLDcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -972,13 +973,13 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Phenixcoin
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Phenixcoin
-    // Mac: ~/Library/Application Support/Phenixcoin
-    // Unix: ~/.phenixcoin
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\VLDcoin
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\VLDcoin
+    // Mac: ~/Library/Application Support/VLDcoin
+    // Unix: ~/.VLDcoin
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "Phenixcoin";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "VLDcoin";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -990,10 +991,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     fs::create_directory(pathRet);
-    return pathRet / "Phenixcoin";
+    return pathRet / "VLDcoin";
 #else
     // Unix
-    return pathRet / ".phenixcoin";
+    return pathRet / ".VLDcoin";
 #endif
 #endif
 }
@@ -1035,7 +1036,7 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "phenixcoin.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("-conf", "VLDcoin.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
     return pathConfigFile;
 }
@@ -1045,14 +1046,14 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 {
     boost::filesystem::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good())
-        return; // No phenixcoin.conf file is OK
+        return; // No VLDcoin.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
 
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
-        // Don't overwrite existing settings so command line settings override phenixcoin.conf
+        // Don't overwrite existing settings so command line settings override VLDcoin.conf
         string strKey = string("-") + it->string_key;
         if (mapSettingsRet.count(strKey) == 0)
         {
@@ -1066,7 +1067,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "phenixcoind.pid"));
+    boost::filesystem::path pathPidFile(GetArg("-pid", "VLDcoind.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }
@@ -1186,7 +1187,7 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
         int64 nMedian = vTimeOffsets.median();
         std::vector<int64> vSorted = vTimeOffsets.sorted();
         // Only let other nodes change our time by so much
-        if (abs64(nMedian) < 35 * 60) // Phenixcoin: changed maximum adjust to 35 mins to avoid letting peers change our time too much in case of an attack.
+        if (abs64(nMedian) < 35 * 60) // VLDcoin: changed maximum adjust to 35 mins to avoid letting peers change our time too much in case of an attack.
         {
             nTimeOffset = nMedian;
         }
@@ -1206,10 +1207,10 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
                 if (!fMatch)
                 {
                     fDone = true;
-                    string strMessage = _("Warning: Please check that your computer's date and time are correct.  If your clock is wrong Phenixcoin will not work properly.");
+                    string strMessage = _("Warning: Please check that your computer's date and time are correct.  If your clock is wrong VLDcoin will not work properly.");
                     strMiscWarning = strMessage;
                     printf("*** %s\n", strMessage.c_str());
-                    uiInterface.ThreadSafeMessageBox(strMessage+" ", string("Phenixcoin"), CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION);
+                    uiInterface.ThreadSafeMessageBox(strMessage+" ", string("VLDcoin"), CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION);
                 }
             }
         }

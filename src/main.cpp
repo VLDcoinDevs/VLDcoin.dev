@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2012 Phenixcoin Developers
+// Copyright (c) 2011-2012 Litecoin Developers
+// Copyright (c) 2013 VLDcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -30,7 +31,7 @@ unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
 uint256 hashGenesisBlock("0xbe2f30f9e8db8f430056869c43503a992d232b28508e83eda101161a18cf7c73");
-static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Phenixcoin: starting difficulty is 1 / 2^12
+static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // VLDcoin: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 CBigNum bnBestChainWork = 0;
@@ -50,7 +51,7 @@ map<uint256, map<uint256, CDataStream*> > mapOrphanTransactionsByPrev;
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "Phenixcoin Signed Message:\n";
+const string strMessageMagic = "VLDcoin Signed Message:\n";
 
 double dHashesPerSec;
 int64 nHPSTimerStart;
@@ -828,16 +829,16 @@ uint256 static GetOrphanRoot(const CBlock* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = 50 * COIN;
+    int64 nSubsidy = 120 * COIN;
 
-    // Subsidy is cut in half every 840000 blocks, which will occur approximately every 4 years
-    nSubsidy >>= (nHeight / 840000); // Phenixcoin: 840k blocks in ~4 years
+    // Subsidy is cut in half every 4 167 000 blocks, which will occur approximately every 8 years
+    nSubsidy >>= (nHeight / 4167000); // Phenixcoin: 4 167k blocks in ~8 years
 
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 2.5 * 24 * 60 * 60; // Phenixcoin: 3.5 days
-static const int64 nTargetSpacing = 1.5 * 60; // Phenixcoin: 2.5 minutes
+static const int64 nTargetTimespan = 1 * 24 * 60 * 60; // VLDcoin: 1 day
+static const int64 nTargetSpacing = 1 * 60; // VLDcoin: 1 minute
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 //
@@ -896,7 +897,7 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         return pindexLast->nBits;
     }
 
-    // Phenixcoin: This fixes an issue where a 51% attack can change difficulty at will.
+    // VLDcoin: This fixes an issue where a 51% attack can change difficulty at will.
     // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
     int blockstogoback = nInterval-1;
     if ((pindexLast->nHeight+1) != nInterval)
@@ -1166,7 +1167,7 @@ bool CTransaction::ConnectInputs(MapPrevTx inputs,
                                  map<uint256, CTxIndex>& mapTestPool, const CDiskTxPos& posThisTx,
                                  const CBlockIndex* pindexBlock, bool fBlock, bool fMiner, bool fStrictPayToScriptHash)
 {
-    // Take over previous transactions' spent pointers
+    // Take over previous transactions' spent pointers --do tuk---
     // fBlock is true when this is called from AcceptBlock when a new best-block is added to the blockchain
     // fMiner is true when called from the internal phenixcoin miner
     // ... both are false when called from CTransaction::AcceptToMemoryPool

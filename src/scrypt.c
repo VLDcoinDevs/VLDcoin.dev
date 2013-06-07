@@ -1,6 +1,7 @@
 /*
  * Copyright 2009 Colin Percival, 2011 ArtForz
  * All rights reserved.
+ * Copyright (c) 2013 VLDcoin Developers
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

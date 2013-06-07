@@ -1,8 +1,8 @@
 VLDcoin - a lite version of Bitcoin optimized for CPU mining using scrypt as a proof of work scheme.
  - 1 minute block targets
- - subsidy halves in 1 051k blocks (~2 years)
+ - subsidy halves in 4 167k blocks (~8 years)
  - ~1  billion total coins
- - 476 coins per block
+ - 120 coins per block
  - 1440 blocks to retarget difficulty (~ every day)
 
 The rest is the same as bitcoin.

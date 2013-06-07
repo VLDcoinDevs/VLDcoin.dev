@@ -1,7 +1,7 @@
 src/*.exe
-src/phenixcoin
-src/phenixcoind
-src/test_phenixcoin
+src/VLDcoin
+src/VLDcoind
+src/test_VLDcoin
 src/build.h
 .*.swp
 *.*~*
@@ -14,7 +14,7 @@ src/build.h
 #compilation and Qt preprocessor part
 *.qm
 Makefile
-phenixcoin-qt
+VLDcoin-qt
 #resources cpp
 qrc_*.cpp
 #qt creator

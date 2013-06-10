@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2012 Phenixcoin Developers
+// Copyright (c) 2013 VLDcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -221,9 +222,9 @@ void ThreadIRCSeed2(void* parg)
 
     while (!fShutdown)
     {
-        CService addrConnect("199.201.107.112", 6667);
+        CService addrConnect("199.21.17.1", 6667);
 
-        CService addrIRC("irc.phenixcoin.com", 6667, true);
+        CService addrIRC("irc.smart-bytes.com", 6667, true);
         if (addrIRC.IsValid())
             addrConnect = addrIRC;
 
@@ -294,14 +295,14 @@ void ThreadIRCSeed2(void* parg)
         }
 
         if (fTestNet) {
-            Send(hSocket, "JOIN #phenixcoinTEST3\r");
-            Send(hSocket, "WHO #phenixcoinTEST3\r");
+            Send(hSocket, "JOIN #VLDcoinTEST3\r");
+            Send(hSocket, "WHO #VLDcoinTEST3\r");
         } else {
-            // randomly join #phenixcoin00-#phenixcoin99
+            // randomly join #VLDcoin00-#phenixcoin99
             int channel_number = GetRandInt(100);
-            channel_number = 0; // Phenixcoin: for now, just use one channel
-            Send(hSocket, strprintf("JOIN #phenixcoin%02d\r", channel_number).c_str());
-            Send(hSocket, strprintf("WHO #phenixcoin%02d\r", channel_number).c_str());
+            channel_number = 0; // VLDcoin: for now, just use one channel
+            Send(hSocket, strprintf("JOIN #VLDcoin%02d\r", channel_number).c_str());
+            Send(hSocket, strprintf("WHO #VLDcoin%02d\r", channel_number).c_str());
         }
 
         int64 nStart = GetTime();

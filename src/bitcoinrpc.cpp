@@ -1,6 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2012 The Phenixcoin Developers
+// Copyright (c) 2011-2012 The Litexcoin Developers
+// Copyright (c) 2013 VLDcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -136,7 +137,7 @@ double GetDifficulty(const CBlockIndex* blockindex = NULL)
 int64 AmountFromValue(const Value& value)
 {
     double dAmount = value.get_real();
-    if (dAmount <= 0.0 || dAmount > 84000000.0)
+    if (dAmount <= 0.0 || dAmount > 84000000.0) // VLDcoin: set the max amount.
         throw JSONRPCError(-3, "Invalid amount");
     int64 nAmount = roundint64(dAmount * COIN);
     if (!MoneyRange(nAmount))
@@ -283,10 +284,10 @@ Value stop(const Array& params, bool fHelp)
     if (fHelp || params.size() != 0)
         throw runtime_error(
             "stop\n"
-            "Stop Phenixcoin server.");
+            "Stop VLDcoin server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "Phenixcoin server has now stopped running!";
+    return "VLDcoin server has now stopped running!";
 }
 
 
@@ -312,14 +313,14 @@ Value getdifficulty(const Array& params, bool fHelp)
 }
 
 
-// Phenixcoin: Return average network hashes per second based on last number of blocks.
+// VLDcoin: Return average network hashes per second based on last number of blocks.
 Value GetNetworkHashPS(int lookup) {
     if (pindexBest == NULL)
         return 0;
 
     // If lookup is -1, then use blocks since last difficulty change.
     if (lookup <= 0)
-        lookup = pindexBest->nHeight % 2016 + 1;
+        lookup = pindexBest->nHeight % 2016 + 1; // VLDcoin: set the amount of blocks b4 diff change
 
     // If lookup is larger than chain, then set it to chain length.
     if (lookup > pindexBest->nHeight)
@@ -456,7 +457,7 @@ Value getnewaddress(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "getnewaddress [account]\n"
-            "Returns a new Phenixcoin address for receiving payments.  "
+            "Returns a new VLDcoin address for receiving payments.  "
             "If [account] is specified (recommended), it is added to the address book "
             "so payments received with the address will be credited to [account].");
 
@@ -523,7 +524,7 @@ Value getaccountaddress(const Array& params, bool fHelp)
     if (fHelp || params.size() != 1)
         throw runtime_error(
             "getaccountaddress <account>\n"
-            "Returns the current Phenixcoin address for receiving payments to this account.");
+            "Returns the current VLDcoin address for receiving payments to this account.");
 
     // Parse the account first so we don't generate a key if there's an error
     string strAccount = AccountFromValue(params[0]);
@@ -546,7 +547,7 @@ Value setaccount(const Array& params, bool fHelp)
 
     CBitcoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(-5, "Invalid Phenixcoin address");
+        throw JSONRPCError(-5, "Invalid VLDcoin address");
 
 
     string strAccount;
@@ -576,7 +577,7 @@ Value getaccount(const Array& params, bool fHelp)
 
     CBitcoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(-5, "Invalid Phenixcoin address");
+        throw JSONRPCError(-5, "Invalid VLDcoin address");
 
     string strAccount;
     map<CTxDestination, string>::iterator mi = pwalletMain->mapAddressBook.find(address.Get());
@@ -643,13 +644,13 @@ Value sendtoaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 4)
         throw runtime_error(
-            "sendtoaddress <phenixcoinaddress> <amount> [comment] [comment-to]\n"
+            "sendtoaddress <VLDcoinaddress> <amount> [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.00000001"
             + HelpRequiringPassphrase());
 
     CBitcoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(-5, "Invalid Phenixcoin address");
+        throw JSONRPCError(-5, "Invalid VLDcoin address");
 
     // Amount
     int64 nAmount = AmountFromValue(params[1]);
@@ -710,7 +711,7 @@ Value verifymessage(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 3)
         throw runtime_error(
-            "verifymessage <phenixcoinaddress> <signature> <message>\n"
+            "verifymessage <VLDcoinaddress> <signature> <message>\n"
             "Verify a signed message");
 
     string strAddress  = params[0].get_str();
@@ -747,14 +748,14 @@ Value getreceivedbyaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getreceivedbyaddress <phenixcoinaddress> [minconf=1]\n"
-            "Returns the total amount received by <phenixcoinaddress> in transactions with at least [minconf] confirmations.");
+            "getreceivedbyaddress <VLDcoinaddress> [minconf=1]\n"
+            "Returns the total amount received by <VLDcoinaddress> in transactions with at least [minconf] confirmations.");
 
-    // Phenixcoin address
+    // VLDcoin address
     CBitcoinAddress address = CBitcoinAddress(params[0].get_str());
     CScript scriptPubKey;
     if (!address.IsValid())
-        throw JSONRPCError(-5, "Invalid Phenixcoin address");
+        throw JSONRPCError(-5, "Invalid VLDcoin address");
     scriptPubKey.SetDestination(address.Get());
     if (!IsMine(*pwalletMain,scriptPubKey))
         return (double)0.0;
@@ -968,14 +969,14 @@ Value sendfrom(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 3 || params.size() > 6)
         throw runtime_error(
-            "sendfrom <fromaccount> <tophenixcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
+            "sendfrom <fromaccount> <toVLDcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.00000001"
             + HelpRequiringPassphrase());
 
     string strAccount = AccountFromValue(params[0]);
     CBitcoinAddress address(params[1].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(-5, "Invalid Phenixcoin address");
+        throw JSONRPCError(-5, "Invalid VLDcoin address");
     int64 nAmount = AmountFromValue(params[2]);
     int nMinDepth = 1;
     if (params.size() > 3)
@@ -1031,7 +1032,7 @@ Value sendmany(const Array& params, bool fHelp)
     {
         CBitcoinAddress address(s.name_);
         if (!address.IsValid())
-            throw JSONRPCError(-5, string("Invalid Phenixcoin address:")+s.name_);
+            throw JSONRPCError(-5, string("Invalid VLDcoin address:")+s.name_);
 
         if (setAddress.count(address))
             throw JSONRPCError(-8, string("Invalid parameter, duplicated address: ")+s.name_);
@@ -1074,7 +1075,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     {
         string msg = "addmultisigaddress <nrequired> <'[\"key\",\"key\"]'> [account]\n"
             "Add a nrequired-to-sign multisignature address to the wallet\"\n"
-            "each key is a Phenixcoin address or hex-encoded public key\n"
+            "each key is a VLDcoin address or hex-encoded public key\n"
             "If [account] is specified, assign address to [account].";
         throw runtime_error(msg);
     }
@@ -1098,7 +1099,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     {
         const std::string& ks = keys[i].get_str();
 
-        // Case 1: Phenixcoin address and we have full public key:
+        // Case 1: VLDcoin address and we have full public key:
         CBitcoinAddress address(ks);
         if (address.IsValid())
         {
@@ -1790,7 +1791,7 @@ Value encryptwallet(const Array& params, bool fHelp)
     // slack space in .dat files; that is bad if the old data is
     // unencrypted private keys.  So:
     StartShutdown();
-    return "wallet encrypted; Phenixcoin server stopping, restart to run with encrypted wallet";
+    return "wallet encrypted; VLDcoin server stopping, restart to run with encrypted wallet";
 }
 
 class DescribeAddressVisitor : public boost::static_visitor<Object>
@@ -1866,10 +1867,10 @@ Value getworkex(const Array& params, bool fHelp)
         );
 
     if (vNodes.empty())
-        throw JSONRPCError(-9, "Phenixcoin is not connected!");
+        throw JSONRPCError(-9, "VLDcoin is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(-10, "Phenixcoin is downloading blocks...");
+        throw JSONRPCError(-10, "VLDcoin is downloading blocks...");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
     static mapNewBlock_t mapNewBlock;
@@ -1998,10 +1999,10 @@ Value getwork(const Array& params, bool fHelp)
             "If [data] is specified, tries to solve the block and returns true if it was successful.");
 
     if (vNodes.empty())
-        throw JSONRPCError(-9, "Phenixcoin is not connected!");
+        throw JSONRPCError(-9, "VLDcoin is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(-10, "Phenixcoin is downloading blocks...");
+        throw JSONRPCError(-10, "VLDcoin is downloading blocks...");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
     static mapNewBlock_t mapNewBlock;    // FIXME: thread safety
@@ -2061,7 +2062,7 @@ Value getwork(const Array& params, bool fHelp)
         result.push_back(Pair("data",     HexStr(BEGIN(pdata), END(pdata))));
         result.push_back(Pair("hash1",    HexStr(BEGIN(phash1), END(phash1)))); // deprecated
         result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
-        result.push_back(Pair("algorithm", "scrypt:1024,1,1"));  // Phenixcoin: specify that we should use the scrypt algorithm
+        result.push_back(Pair("algorithm", "scrypt:1024,1,1"));  // VLDxcoin: specify that we should use the scrypt algorithm
         return result;
     }
     else
@@ -2130,10 +2131,10 @@ Value getblocktemplate(const Array& params, bool fHelp)
     if (strMode == "template")
     {
         if (vNodes.empty())
-            throw JSONRPCError(-9, "Phenixcoin is not connected!");
+            throw JSONRPCError(-9, "VLDcoin is not connected!");
 
         if (IsInitialBlockDownload())
-            throw JSONRPCError(-10, "Phenixcoin is downloading blocks...");
+            throw JSONRPCError(-10, "VLDcoin is downloading blocks...");
 
         static CReserveKey reservekey(pwalletMain);
 
@@ -2409,7 +2410,7 @@ string HTTPPost(const string& strMsg, const map<string,string>& mapRequestHeader
 {
     ostringstream s;
     s << "POST / HTTP/1.1\r\n"
-      << "User-Agent: phenixcoin-json-rpc/" << FormatFullVersion() << "\r\n"
+      << "User-Agent: VLDcoin-json-rpc/" << FormatFullVersion() << "\r\n"
       << "Host: 127.0.0.1\r\n"
       << "Content-Type: application/json\r\n"
       << "Content-Length: " << strMsg.size() << "\r\n"
@@ -2440,7 +2441,7 @@ static string HTTPReply(int nStatus, const string& strMsg, bool keepalive)
     if (nStatus == 401)
         return strprintf("HTTP/1.0 401 Authorization Required\r\n"
             "Date: %s\r\n"
-            "Server: phenixcoin-json-rpc/%s\r\n"
+            "Server: VLDcoin-json-rpc/%s\r\n"
             "WWW-Authenticate: Basic realm=\"jsonrpc\"\r\n"
             "Content-Type: text/html\r\n"
             "Content-Length: 296\r\n"
@@ -2467,7 +2468,7 @@ static string HTTPReply(int nStatus, const string& strMsg, bool keepalive)
             "Connection: %s\r\n"
             "Content-Length: %d\r\n"
             "Content-Type: application/json\r\n"
-            "Server: phenixcoin-json-rpc/%s\r\n"
+            "Server: VLDcoin-json-rpc/%s\r\n"
             "\r\n"
             "%s",
         nStatus,
@@ -2565,7 +2566,7 @@ bool HTTPAuthorized(map<string, string>& mapHeaders)
 }
 
 //
-// JSON-RPC protocol.  Phenixcoin speaks version 1.0 for maximum compatibility,
+// JSON-RPC protocol.  VLDcoin speaks version 1.0 for maximum compatibility,
 // but uses JSON-RPC 1.1/2.0 standards for parts of the 1.0 standard that were
 // unspecified (HTTP errors and contents of 'error').
 //
@@ -2843,7 +2844,7 @@ void ThreadRPCServer2(void* parg)
     {
         unsigned char rand_pwd[32];
         RAND_bytes(rand_pwd, 32);
-        string strWhatAmI = "To use phenixcoind";
+        string strWhatAmI = "To use VLDcoind";
         if (mapArgs.count("-server"))
             strWhatAmI = strprintf(_("To use the %s option"), "\"-server\"");
         else if (mapArgs.count("-daemon"))
@@ -2851,7 +2852,7 @@ void ThreadRPCServer2(void* parg)
         uiInterface.ThreadSafeMessageBox(strprintf(
             _("%s, you must set a rpcpassword in the configuration file:\n %s\n"
               "It is recommended you use the following random password:\n"
-              "rpcuser=phenixcoinrpc\n"
+              "rpcuser=VLDcoinrpc\n"
               "rpcpassword=%s\n"
               "(you do not need to remember this password)\n"
               "If the file does not exist, create it with owner-readable-only file permissions.\n"),
@@ -2889,7 +2890,7 @@ void ThreadRPCServer2(void* parg)
     // Try a dual IPv6/IPv4 socket, falling back to separate IPv4 and IPv6 sockets
     const bool loopback = !mapArgs.count("-rpcallowip");
     asio::ip::address bindAddress = loopback ? asio::ip::address_v6::loopback() : asio::ip::address_v6::any();
-    ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", 9554));
+    ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", 19554)); //VLDcoin: set def port for connections
 
     boost::signals2::signal<void ()> StopRequests;
 
@@ -3165,7 +3166,7 @@ Object CallRPC(const string& strMethod, const Array& params)
     asio::ssl::stream<asio::ip::tcp::socket> sslStream(io_service, context);
     SSLIOStreamDevice<asio::ip::tcp> d(sslStream, fUseSSL);
     iostreams::stream< SSLIOStreamDevice<asio::ip::tcp> > stream(d);
-    if (!d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", "9554")))
+    if (!d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", "19554"))) //VLDcoin: Connection port
         throw runtime_error("couldn't connect to server");
 
     // HTTP basic authentication
